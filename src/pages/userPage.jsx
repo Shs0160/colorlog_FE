@@ -61,6 +61,7 @@ function UserPage() {
     //const navigate = useNavigate();
     const [result, setResult] = useState('');
     const [resultImagePath, setResultImagePath] = useState('');
+    const [mediaUrls, setMediaUrls] = useState({ imagePath: "", videoPath: "" });
 
     
     //const { id } = useParams();
@@ -78,27 +79,25 @@ function UserPage() {
             params: { userId }
         })
         .then(response => {
-            setResult(response.data.result); // '여름 쿨톤' 같은 결과 값을 받아옴
-            setResultImagePath(response.data.imagePath.resultImagePath); // 결과 이미지 경로
+            setResult(response.data.result);
+            setResultImagePath(response.data.imagePath.resultImagePath);
         })
         .catch(error => console.error('There was an error!', error));
     }, [userId]);
 
-    const [mediaUrls, setMediaUrls] = useState({imagePath: "", videoPath: ""});
-
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(
-                    'http://192.168.0.75:8080/api/photogroup/get_photogroup'
-                );
+                const response = await axios.get('http://192.168.0.75:8080/api/photogroup/get_photogroup', {
+                    params: { userId }
+                });
                 setMediaUrls(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         }
         fetchData();
-    }, []);
+    }, [userId]);
 
     const handleClick1 = () => {
         downloadFile(mediaUrls.imagePath, "jpeg");
